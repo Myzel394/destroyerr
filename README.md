@@ -33,7 +33,7 @@ services:
       NTFY_URL: https://ntfy.sh/I5rzgNidrnKngf/sse
       CHECK_INTERVAL: 10
       DESTROY_TIMEOUT: 60
-      SH_COMMAND: "curl -d '[DESTROYERR] Device has not pinged since 60 seconds!' https://ntfy.sh/ojuzhnHdzudfn"
+      SH_COMMAND: "curl -d '[DESTROYERR] Device has not sent a ping for over 60 seconds!' https://ntfy.sh/ojuzhnHdzudfn"
 ````
 
 This will send a notification to the topic `ojuzhnHdzudfn` when the device has not pinged for 60 seconds, checking every 10 seconds.
