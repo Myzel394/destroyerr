@@ -1,0 +1,7 @@
+dist
+flake.nix
+flake.lock
+justfile
+debug.log
+.env
+.gitignore

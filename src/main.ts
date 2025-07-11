@@ -2,12 +2,16 @@ import { EventSource } from "eventsource";
 import { ENV } from "./envs";
 import { DB } from "./db";
 import { NTFYMessage } from "./types";
+import { exec } from "child_process";
 
 let eventSource: EventSource | null = null;
 const db = new DB();
 
 export function main() {
 	console.info(`Starting in environment: ${process.env.NODE_ENV}`);
+	console.info(`Using NTFY URL: ${ENV.NTFY_URL}`);
+	console.info(`Check interval: ${ENV.CHECK_INTERVAL} seconds`);
+	console.info(`Destroy timeout: ${ENV.DESTROY_TIMEOUT} seconds`);
 	eventSource = new EventSource(ENV.NTFY_URL);
 
 	console.info("EventSource created, listening for messages...");
@@ -49,7 +53,7 @@ export function main() {
 		if (diff >= ENV.DESTROY_TIMEOUT * 1_000) {
 			console.warn(`Timeout reached! Executing command: ${ENV.SH_COMMAND}`);
 
-			require("child_process").exec(ENV.SH_COMMAND, (error, stdout, stderr) => {
+			exec(ENV.SH_COMMAND, (error, stdout, stderr) => {
 				if (error) {
 					console.error("Error executing command:", error);
 					return;

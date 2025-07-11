@@ -7,13 +7,15 @@
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",
-    "@swc/cli": "^0.7.8",
-    "@swc/core": "^1.12.11",
-    "@types/node": "^24.0.13"
+    "@types/node": "^24.0.13",
+    "esbuild": "^0.25.6"
   },
   "dependencies": {
     "eventsource": "^4.0.0",
     "in-seconds": "^1.2.0",
     "zod": "^4.0.5"
+  },
+  "browser": {
+    "child_process": false
   }
 }

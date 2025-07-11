@@ -21,6 +21,7 @@
             corepack
             git
             biome
+            esbuild
 
             just
           ];
