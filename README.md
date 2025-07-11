@@ -2,15 +2,15 @@
 
 Keeping integrity for mission-critical systems.
 
-Destroyerr is a tool that allows you to automatically run commands when a device has not contacted the server for a specified amount of time. Using [ntfy.sh](https://ntfy.sh), you can send keep-alive messages from any device to the server. Once the device stops sending these messages, Destroyerr will execute a command to shut down the device, or destroy it, or any other action you specify.
+Destroyerr is a tool that allows you to automatically run commands when a device has not contacted your server for a specified amount of time. Using [ntfy.sh](https://ntfy.sh), you can send keep-alive messages from any device to the server. Once the device stops sending these messages, Destroyerr will execute a command to shut down the device, or destroy it, or any other action you specify.
 
 This ensures the integrity of your systems by preventing devices from being left in an unknown state.
 
 **This readme contains a whole tutorial on how to set up Destroyerr using _Docker_, _ntfy_, and _Automate_ on Android**
 
-## Tutorial
+To keep your server alive, you need to send a ntfy message with `title: destroyerr` and `message: keep-alive` to the ntfy server.
 
-To keep the server alive, you need to send a ntfy message with `title: destroyerr` and `message: keep-alive` to the ntfy server.
+## Tutorial
 
 ### Set up Docker
 
@@ -18,7 +18,7 @@ Set up destroyerr using Docker. This tutorial assumes you have Docker installed 
 Pass the following environment variables to the Docker container:
 
 - `NTFY_URL`: The URL of your ntfy server, including the topic, **and a `/sse` suffix**. For example, `https://ntfy.sh/your-topic/sse`.
-- `SH_COMMAND`: What command to run once the timeout is reached. For example, `shutdown now` to shut down the device.
+- `SH_COMMAND`: What command to run once the timeout is reached. [Here's how you can shut down your server from within a Docker container](#shut-down-your-server-from-within-docker)
 - `DESTROY_TIMEOUT`: The timeout in seconds after which the command will be executed. For example, `3600` for one hour.
 - `CHECK_INTERVAL` (advanced): The interval in seconds at which the server will check for devices that have not sent a keep-alive message. For example, `60` for one minute.
 
@@ -60,4 +60,28 @@ Your flow should look something like this:
 </p>
 
 4. Start the workflow, and your phone will now send keep-alive messages to the ntfy server at the specified interval
+
+## Shut down your server from within Docker
+
+Inside a Docker container, you cannot run `shutdown`, or `reboot`.
+What you can do instead, is to mount the host's `/proc/sysrq-trigger` into the container and then write to it to trigger a shutdown or reboot.
+
+It's recommended to first send a "sync disks" command to ensure all data is written to disk before shutting down, and then send a reboot command.
+
+Here's a sample `docker-compose.yaml` file that does this:
+
+```yaml
+services:
+  destroyerr:
+    container_name: destroyerr
+    image: myzel394/destroyerr
+    environment:
+      NTFY_URL: https://ntfy.sh/I5rzgNidrnKngf/sse
+      CHECK_INTERVAL: 10
+      DESTROY_TIMEOUT: 60
+      # This will sync the disks, wait 30 seconds, and then reboot the system
+      SH_COMMAND: "echo s > /sysrq && sleep 30 && echo b > /sysrq"
+````
+
+See https://www.kernel.org/doc/html/latest/admin-guide/sysrq.html#what-are-the-command-keys for more information on the sysrq commands.
 
