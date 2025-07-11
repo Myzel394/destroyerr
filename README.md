@@ -75,6 +75,8 @@ services:
   destroyerr:
     container_name: destroyerr
     image: myzel394/destroyerr
+    volumes:
+      - /proc/sysrq-trigger:/sysrq
     environment:
       NTFY_URL: https://ntfy.sh/I5rzgNidrnKngf/sse
       CHECK_INTERVAL: 10
