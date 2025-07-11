@@ -54,7 +54,10 @@ This setup uses [Automate](https://play.google.com/store/apps/details?id=com.lla
 
 Your flow should look something like this:
 
-![Automate Flow Example](assets/automate_workflow.png)
+
+<p align="center">
+    <img src="assets/automate_workflow.png" align="center" width="350" alt="Automate Workflow example" />
+</p>
 
 4. Start the workflow, and your phone will now send keep-alive messages to the ntfy server at the specified interval
 
