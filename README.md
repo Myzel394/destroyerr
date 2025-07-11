@@ -2,11 +2,11 @@
 
 Keeping integrity for mission-critical systems.
 
-Destroyerr is a tool that allows you to automatically run commands when a device has not contacted the server for a specified amount of time. Using [ntfy.sh](https://nfty.sh), you can send keep-alive messages from any device to the server. Once the device stops sending these messages, Destroyerr will execute a command to shut down the device, or destroy it, or any other action you specify.
+Destroyerr is a tool that allows you to automatically run commands when a device has not contacted the server for a specified amount of time. Using [ntfy.sh](https://ntfy.sh), you can send keep-alive messages from any device to the server. Once the device stops sending these messages, Destroyerr will execute a command to shut down the device, or destroy it, or any other action you specify.
 
 This ensures the integrity of your systems by preventing devices from being left in an unknown state.
 
-**This readme contains a whole tutorial on how to set up Destroyerr using _Docker_, and _nfty_.**
+**This readme contains a whole tutorial on how to set up Destroyerr using _Docker_, _ntfy_, and _Automate_ on Android**
 
 ## Tutorial
 
