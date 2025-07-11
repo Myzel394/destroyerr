@@ -1,0 +1,10 @@
+{
+  "name": "destroyerr",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.12.11"
+  }
+}
