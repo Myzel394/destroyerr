@@ -19,6 +19,9 @@
             yarn
             corepack
             git
+            biome
+
+            just
           ];
         };
       }
