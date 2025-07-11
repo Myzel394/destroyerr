@@ -14,3 +14,6 @@ lint:
 ready:
     just lint && just bundle
 
+dev:
+    NODE_ENV=development tsx watch ./src/index.ts
+

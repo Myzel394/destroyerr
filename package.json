@@ -1,11 +1,19 @@
 {
   "name": "destroyerr",
-  "version": "1.0.0",
+  "description": "Ensure integrity for mission-critical systems",
+  "version": "0.1.0",
   "main": "index.js",
+  "author": "Myzel394",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",
     "@swc/cli": "^0.7.8",
-    "@swc/core": "^1.12.11"
+    "@swc/core": "^1.12.11",
+    "@types/node": "^24.0.13"
+  },
+  "dependencies": {
+    "eventsource": "^4.0.0",
+    "in-seconds": "^1.2.0",
+    "zod": "^4.0.5"
   }
 }

@@ -17,6 +17,7 @@
           packages = with pkgs; [
             nodejs_24
             yarn
+            tsx
             corepack
             git
             biome
