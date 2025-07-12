@@ -25,12 +25,6 @@ jobs:
         with:
           context: .
           push: true
-          platforms:
-            - linux/amd64
-            - linux/arm64
-            - darwin/amd64
-            - darwin/arm64
-          tags:
-            - myzel394/destroyerr:${{ github.event.release.tag_name }}
-            - myzel394/destroyerr:latest
+          platforms: linux/amd64,linux/arm64,darwin/amd64,darwin/arm64
+          tags: myzel394/destroyerr:${{ github.event.release.tag_name }},myzel394/destroyerr:latest
 
