@@ -2,7 +2,6 @@
   "name": "destroyerr",
   "description": "Ensure integrity for mission-critical systems",
   "version": "0.1.0",
-  "main": "index.js",
   "author": "Myzel394",
   "license": "MIT",
   "devDependencies": {
@@ -14,8 +13,5 @@
     "eventsource": "^4.0.0",
     "in-seconds": "^1.2.0",
     "zod": "^4.0.5"
-  },
-  "browser": {
-    "child_process": false
   }
 }
