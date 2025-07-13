@@ -1,4 +1,4 @@
-import { EventSource } from "eventsource";
+import { ErrorEvent, EventSource } from "eventsource";
 import { ENV } from "./envs";
 import { DB } from "./db";
 import { NTFYMessage } from "./types";
@@ -6,6 +6,7 @@ import { exec } from "child_process";
 
 let eventSource: EventSource | null = null;
 const db = new DB();
+let paused = false;
 
 export function main() {
 	console.info(`Starting in environment: ${process.env.NODE_ENV}`);
@@ -24,22 +25,62 @@ export function main() {
 		if (ntfyMessage.event === "message" && ntfyMessage.title === "destroyerr") {
 			if (ntfyMessage.message === "keep-alive") {
 				db.writeCurrentTime();
+				db.resetDiff();
 			}
 		}
 	};
 
 	eventSource.onerror = (error) => {
 		console.error("EventSource error:", error);
+
+		// Check if server is unreachable
+		if (
+			error instanceof ErrorEvent &&
+			error.message?.includes("ECONNREFUSED")
+		) {
+			console.warn("NTFY server is unreachable.");
+
+			switch (ENV.NTFY_SERVER_UNREACHABLE) {
+				case "continue":
+					console.debug("Ignoring error and continuing.");
+					break;
+				case "pause":
+					console.debug("Pausing EventSource connection.");
+					paused = true;
+					break;
+				case "run_command":
+					console.info(`Running command: ${ENV.SH_COMMAND}`);
+
+					exec(ENV.SH_COMMAND, (error) => {
+						if (error) {
+							console.error("Error executing command:", error);
+							return;
+						}
+
+						stop();
+					});
+					break;
+			}
+		}
 	};
 
 	eventSource.onopen = () => {
 		console.info("EventSource connection opened.");
+
+		// Reset pause state
+		paused = false;
 	};
 
 	db.writeCurrentTime();
 
 	setInterval(() => {
 		console.info("Checking for timeout");
+
+		if (paused) {
+			console.info("EventSource is paused, skipping timeout check.");
+			db.writeCurrentTime();
+			return;
+		}
 
 		const lastTime = db.getLastTime();
 
@@ -50,41 +91,43 @@ export function main() {
 
 		const diff = Date.now() - lastTime.getTime();
 
-		if (diff >= ENV.DESTROY_TIMEOUT * 1_000) {
+		db.addDiff(diff);
+		db.writeCurrentTime();
+
+		if (db.getDiff() >= ENV.DESTROY_TIMEOUT * 1_000) {
 			console.warn(`Timeout reached! Executing command: ${ENV.SH_COMMAND}`);
 
-			exec(ENV.SH_COMMAND, (error, stdout, stderr) => {
+			exec(ENV.SH_COMMAND, (error) => {
 				if (error) {
 					console.error("Error executing command:", error);
 					return;
 				}
 
-				console.info("Command executed successfully:", stdout);
-
-				// Reset
-				db.writeCurrentTime();
+				stop();
 			});
 		} else {
 			console.info(
-				`No timeout reached. Time since last message: ${diff / 1000} seconds`,
+				`No timeout reached. Time since last message: ${db.getDiff() / 1000} seconds`,
 			);
 		}
 	}, ENV.CHECK_INTERVAL * 1_000);
 }
 
-process.on("SIGINT", () => {
-	console.log("SIGINT received, closing EventSource...");
+function stop() {
+	console.info("Stopping destroyerr");
+
 	if (eventSource) {
 		eventSource.close();
-		console.log("EventSource closed.");
 	}
+
 	process.exit(0);
+}
+
+process.on("SIGINT", () => {
+	console.info("SIGINT received");
+	stop();
 });
 process.on("SIGTERM", () => {
-	console.log("SIGTERM received, closing EventSource...");
-	if (eventSource) {
-		eventSource.close();
-		console.log("EventSource closed.");
-	}
-	process.exit(0);
+	console.info("SIGTERM received, closing EventSource...");
+	stop();
 });

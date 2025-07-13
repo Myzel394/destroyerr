@@ -21,6 +21,10 @@ const ENV_SCHEMA = z.object({
 	SH_COMMAND: z
 		.string()
 		.default("echo 'No messages received; Timeout reached!'"),
+	// What to do if the ntfy server is unreachable
+	NTFY_SERVER_UNREACHABLE: z
+		.enum(["continue", "pause", "run_command"])
+		.default("continue"),
 });
 
 export function loadEnv(): z.infer<typeof ENV_SCHEMA> {

@@ -1,46 +1,39 @@
+type Data = {
+	currentTime: number;
+	diff: number;
+};
+
 export class DB {
-	private lastData: string | null = null;
+	private lastData: Data;
 
-	constructor() {}
-
-	private writeToDb(data: string): void {
-		console.debug("Writing to DB");
-
-		this.lastData = data;
+	constructor() {
+		this.lastData = {
+			currentTime: Date.now(),
+			diff: 0,
+		};
 	}
 
-	private readFromDb(): string | null {
-		console.debug("Reading from DB");
+	resetDiff(): void {
+		console.debug("Resetting diff in DB");
 
-		return this.lastData;
+		this.lastData.diff = 0;
 	}
 
 	writeCurrentTime(): void {
-		const newData = {
-			currentTime: Date.now(),
-		};
-
-		this.writeToDb(JSON.stringify(newData));
+		this.lastData.currentTime = Date.now();
 	}
 
-	getLastTime(): Date | null {
-		const data = this.readFromDb();
-		if (!data) {
-			return null;
-		}
+	getLastTime(): Date {
+		return new Date(this.lastData.currentTime);
+	}
 
-		try {
-			const parsedData = JSON.parse(data);
-			const time = parsedData.currentTime;
+	addDiff(diff: number): void {
+		console.debug("Adding diff to DB:", diff);
 
-			if (typeof time !== "number") {
-				return null;
-			}
+		this.lastData.diff += diff;
+	}
 
-			return new Date(time);
-		} catch (error) {
-			console.error("Error parsing DB data:", error);
-			return null;
-		}
+	getDiff(): number {
+		return this.lastData.diff;
 	}
 }
