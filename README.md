@@ -21,6 +21,10 @@ Pass the following environment variables to the Docker container:
 - `SH_COMMAND`: What command to run once the timeout is reached. [Here's how you can shut down your server from within a Docker container](#shut-down-your-server-from-within-docker)
 - `DESTROY_TIMEOUT`: The timeout in seconds after which the command will be executed. For example, `3600` for one hour.
 - `CHECK_INTERVAL` (advanced): The interval in seconds at which the server will check for devices that have not sent a keep-alive message. For example, `60` for one minute.
+- `NTFY_SERVER_UNREACHABLE` (advanced): What to do if the ntfy server is unreachable. destroyerr will automatically reconnect once the server is back online. However, you can specify what to do in the meantime:
+  - `continue`: Continue the timeout as if the ntfy server is reachable. This is the default behavior.
+  - `pause`: Pause the timeout until the ntfy server is reachable again. This means that the command will not be executed until the server is back online.
+  - `run_command`: Run the `SH_COMMAND` immediately if the ntfy server is unreachable. This is useful if you want to take immediate action when the server is down.
 
 Here's an example `docker-compose.yaml` file to get you started:
 
